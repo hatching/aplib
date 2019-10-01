@@ -3,7 +3,11 @@
 
 package aplib
 
-type aPstate struct {
+import (
+	"bytes"
+)
+
+type aPdecompress struct {
 	src      []byte
 	index    uint32
 	length   uint32
@@ -12,7 +16,7 @@ type aPstate struct {
 	bitcount uint32
 }
 
-func (a *aPstate) getBit() *int {
+func (a *aPdecompress) getBit() *int {
 	if a.bitcount == 0 {
 		if a.length == 0 {
 			return nil
@@ -30,7 +34,7 @@ func (a *aPstate) getBit() *int {
 	return &bit
 }
 
-func (a *aPstate) getGamma() *int {
+func (a *aPdecompress) getGamma() *int {
 	result := 1
 	cont := true
 	for cont {
@@ -54,13 +58,14 @@ func (a *aPstate) getGamma() *int {
 }
 
 func Decompress(buf []byte) []byte {
-	a := aPstate{
-		src: buf,
+	a := aPdecompress{
+		src:    buf,
+		length: uint32(len(buf)),
 	}
 
 	r0, lwm, done := -1, false, false
 
-	if len(a.src) < 1 {
+	if a.length < 1 {
 		return nil
 	}
 
