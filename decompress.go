@@ -3,12 +3,6 @@
 
 package aplib
 
-import "bytes"
-
-func Compress(buf []byte) ([]byte, error) {
-	return nil, nil
-}
-
 type aPstate struct {
 	src      []byte
 	index    uint32
