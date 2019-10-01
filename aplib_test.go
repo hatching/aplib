@@ -21,3 +21,13 @@ func TestDecompress(t *testing.T) {
 		t.Errorf("invalid decompression of hello world")
 	}
 }
+
+func TestTwoWay(t *testing.T) {
+	var v []byte
+	for idx := 0; idx < 1024; idx++ {
+		v = append(v, 'A')
+	}
+	if !reflect.DeepEqual(v, Decompress(Compress(v))) {
+		t.Errorf("invalid decompression of hello world")
+	}
+}
