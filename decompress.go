@@ -34,8 +34,8 @@ func (a *aPdecompress) getBit() *int {
 	return &bit
 }
 
-func (a *aPdecompress) getGamma() *int {
-	result := 1
+func (a *aPdecompress) getGamma() *uint32 {
+	result := uint32(1)
 	cont := true
 	for cont {
 		if result&0x80000000 != 0 {
@@ -45,7 +45,7 @@ func (a *aPdecompress) getGamma() *int {
 		if bit := a.getBit(); bit == nil {
 			return nil
 		} else {
-			result += result + *bit
+			result += result + uint32(*bit)
 		}
 
 		if bit := a.getBit(); bit == nil {
@@ -134,17 +134,17 @@ func Decompress(buf []byte) []byte {
 				if offs := a.getGamma(); offs == nil {
 					return nil
 				} else if lwm == false && *offs == 2 {
-					*offs = r0
+					*offs = uint32(r0)
 
 					if length := a.getGamma(); length == nil {
 						return nil
-					} else if *offs >= a.dst.Len() {
+					} else if int(*offs) >= a.dst.Len() {
 						return nil
 					} else {
 						// off := a.dst.Len()-*offs
 						// a.dst.Write(a.dst.Bytes()[off:off+*length])
 						for ; *length != 0; *length -= 1 {
-							ch := a.dst.Bytes()[a.dst.Len()-*offs]
+							ch := a.dst.Bytes()[a.dst.Len()-int(*offs)]
 							a.dst.Write([]byte{ch})
 						}
 					}
@@ -164,7 +164,7 @@ func Decompress(buf []byte) []byte {
 					if a.length == 0 {
 						return nil
 					}
-					*offs += int(a.src[a.index])
+					*offs += uint32(a.src[a.index])
 					a.index++
 					a.length--
 
@@ -180,16 +180,16 @@ func Decompress(buf []byte) []byte {
 						if *offs < 128 {
 							*length += 2
 						}
-						if *offs >= a.dst.Len() {
+						if int(*offs) >= a.dst.Len() {
 							return nil
 						}
 						// off := a.dst.Len()-*offs
 						// a.dst.Write(a.dst.Bytes()[off:off+*length])
 						for ; *length != 0; *length -= 1 {
-							ch := a.dst.Bytes()[a.dst.Len()-*offs]
+							ch := a.dst.Bytes()[a.dst.Len()-int(*offs)]
 							a.dst.Write([]byte{ch})
 						}
-						r0 = *offs
+						r0 = int(*offs)
 					}
 					lwm = true
 				}

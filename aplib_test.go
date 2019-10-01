@@ -21,6 +21,7 @@ func TestDecompress(t *testing.T) {
 		t.Errorf("invalid decompression of hello world")
 	}
 
+	Decompress([]byte("\xc2+\xed\xff\x02\xff\xff\xff\xff\xff\xff\xff\xe63}456620891834-41"))
 	Decompress([]byte("0E0"))
 }
 
