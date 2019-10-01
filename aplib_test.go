@@ -23,6 +23,7 @@ func TestDecompress(t *testing.T) {
 
 	Decompress([]byte("\xc2+\xed\xff\x02\xff\xff\xff\xff\xff\xff\xff\xe63}456620891834-41"))
 	Decompress([]byte("0E0"))
+	Decompress([]byte("n\x15ii\x15\x03\xef\xef\xbf\xef\xef\xbf\xff\x00\x04\xff"))
 }
 
 func TestTwoWay(t *testing.T) {

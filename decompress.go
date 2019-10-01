@@ -7,6 +7,8 @@ import (
 	"bytes"
 )
 
+var DecompressMaxSize = 4 * 1024 * 1024
+
 type aPdecompress struct {
 	src      []byte
 	index    uint32
@@ -138,6 +140,8 @@ func Decompress(buf []byte) []byte {
 
 					if length := a.getGamma(); length == nil {
 						return nil
+					} else if a.dst.Len()+int(*length) > DecompressMaxSize {
+						return nil
 					} else if int(*offs) >= a.dst.Len() {
 						return nil
 					} else {
@@ -169,6 +173,8 @@ func Decompress(buf []byte) []byte {
 					a.length--
 
 					if length := a.getGamma(); length == nil {
+						return nil
+					} else if a.dst.Len()+int(*length) > DecompressMaxSize {
 						return nil
 					} else {
 						if *offs >= 32000 {
