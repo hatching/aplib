@@ -20,6 +20,8 @@ func TestDecompress(t *testing.T) {
 	if !reflect.DeepEqual(v, []byte("hello world")) {
 		t.Errorf("invalid decompression of hello world")
 	}
+
+	Decompress([]byte("0E0"))
 }
 
 func TestTwoWay(t *testing.T) {

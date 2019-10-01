@@ -63,7 +63,7 @@ func Decompress(buf []byte) []byte {
 		length: uint32(len(buf)),
 	}
 
-	r0, lwm, done := -1, false, false
+	r0, lwm, done := 0xffffffff, false, false
 
 	if a.length < 1 {
 		return nil
