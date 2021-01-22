@@ -1,4 +1,4 @@
-// Copyright (C) 2019 Hatching B.V.
+// Copyright (C) 2019-2021 Hatching B.V.
 // All rights reserved.
 
 package aplib
@@ -197,8 +197,8 @@ func Decompress(buf []byte) []byte {
 						}
 						r0 = int(*offs)
 					}
-					lwm = true
 				}
+				lwm = true
 			}
 		} else {
 			if a.length == 0 {
