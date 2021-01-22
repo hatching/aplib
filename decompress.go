@@ -186,11 +186,9 @@ func Decompress(buf []byte) []byte {
 						if *offs < 128 {
 							*length += 2
 						}
-						if int(*offs) >= a.dst.Len() {
+						if *offs == 0 || int(*offs) >= a.dst.Len() {
 							return nil
 						}
-						// off := a.dst.Len()-*offs
-						// a.dst.Write(a.dst.Bytes()[off:off+*length])
 						for ; *length != 0; *length -= 1 {
 							ch := a.dst.Bytes()[a.dst.Len()-int(*offs)]
 							a.dst.Write([]byte{ch})
