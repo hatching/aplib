@@ -4,15 +4,15 @@
 package aplib
 
 import (
+	"bufio"
 	"bytes"
+	"io"
 )
 
 var DecompressMaxSize = 4 * 1024 * 1024
 
 type aPdecompress struct {
-	src      []byte
-	index    uint32
-	length   uint32
+	src      *bufio.Reader
 	dst      bytes.Buffer
 	tag      uint8
 	bitcount uint32
@@ -20,12 +20,11 @@ type aPdecompress struct {
 
 func (a *aPdecompress) getBit() *int {
 	if a.bitcount == 0 {
-		if a.length == 0 {
+		ch, err := a.src.ReadByte()
+		if err != nil {
 			return nil
 		}
-		a.tag = a.src[a.index]
-		a.index++
-		a.length--
+		a.tag = ch
 		a.bitcount = 7
 	} else {
 		a.bitcount--
@@ -59,21 +58,19 @@ func (a *aPdecompress) getGamma() *uint32 {
 	return &result
 }
 
-func Decompress(buf []byte) []byte {
+func Decompress2(r io.Reader) []byte {
 	a := aPdecompress{
-		src:    buf,
-		length: uint32(len(buf)),
+		src: bufio.NewReader(r),
 	}
 
 	r0, lwm, done := 0xffffffff, false, false
 
-	if a.length < 1 {
+	ch, err := a.src.ReadByte()
+	if err != nil {
 		return nil
 	}
 
-	a.dst.Write([]byte{a.src[a.index]})
-	a.index++
-	a.length--
+	a.dst.Write([]byte{ch})
 
 	for !done {
 		if bit := a.getBit(); bit == nil {
@@ -104,13 +101,12 @@ func Decompress(buf []byte) []byte {
 					}
 					lwm = false
 				} else {
-					if a.length == 0 {
+					ch, err := a.src.ReadByte()
+					if err != nil {
 						return nil
 					}
 
-					offs := int(a.src[a.index])
-					a.index++
-					a.length--
+					offs := int(ch)
 
 					length := 2 + (offs & 1)
 					offs >>= 1
@@ -165,12 +161,11 @@ func Decompress(buf []byte) []byte {
 
 					*offs <<= 8
 
-					if a.length == 0 {
+					ch, err := a.src.ReadByte()
+					if err != nil {
 						return nil
 					}
-					*offs += uint32(a.src[a.index])
-					a.index++
-					a.length--
+					*offs += uint32(ch)
 
 					if length := a.getGamma(); length == nil {
 						return nil
@@ -199,14 +194,17 @@ func Decompress(buf []byte) []byte {
 				lwm = true
 			}
 		} else {
-			if a.length == 0 {
+			ch, err := a.src.ReadByte()
+			if err != nil {
 				return nil
 			}
-			a.dst.Write([]byte{a.src[a.index]})
-			a.index++
-			a.length--
+			a.dst.Write([]byte{ch})
 			lwm = false
 		}
 	}
 	return a.dst.Bytes()
+}
+
+func Decompress(buf []byte) []byte {
+	return Decompress2(bytes.NewReader(buf))
 }
