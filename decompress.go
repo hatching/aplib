@@ -91,7 +91,7 @@ func Decompress2(r io.Reader) []byte {
 						}
 					}
 					if offs != 0 {
-						if offs >= a.dst.Len() {
+						if offs > a.dst.Len() {
 							return nil
 						}
 						ch := a.dst.Bytes()[a.dst.Len()-offs]
@@ -112,7 +112,7 @@ func Decompress2(r io.Reader) []byte {
 					offs >>= 1
 
 					if offs != 0 {
-						if offs >= a.dst.Len() {
+						if offs > a.dst.Len() {
 							return nil
 						}
 
@@ -138,7 +138,7 @@ func Decompress2(r io.Reader) []byte {
 						return nil
 					} else if a.dst.Len()+int(*length) > DecompressMaxSize {
 						return nil
-					} else if int(*offs) >= a.dst.Len() {
+					} else if int(*offs) > a.dst.Len() {
 						return nil
 					} else {
 						// off := a.dst.Len()-*offs
@@ -181,7 +181,7 @@ func Decompress2(r io.Reader) []byte {
 						if *offs < 128 {
 							*length += 2
 						}
-						if *offs == 0 || int(*offs) >= a.dst.Len() {
+						if *offs == 0 || int(*offs) > a.dst.Len() {
 							return nil
 						}
 						for ; *length != 0; *length -= 1 {
