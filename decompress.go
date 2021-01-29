@@ -82,7 +82,7 @@ func Decompress2(r io.Reader) []byte {
 				if bit := a.getBit(); bit == nil {
 					return nil
 				} else if *bit != 0 {
-					offs := 0
+					var offs int
 					for i := 4; i != 0; i-- {
 						if bit := a.getBit(); bit == nil {
 							return nil
@@ -116,8 +116,6 @@ func Decompress2(r io.Reader) []byte {
 							return nil
 						}
 
-						// off := a.dst.Len()-offs
-						// a.dst.Write(a.dst.Bytes()[off:off+length])
 						for ; length != 0; length-- {
 							ch := a.dst.Bytes()[a.dst.Len()-offs]
 							a.dst.Write([]byte{ch})
@@ -141,8 +139,6 @@ func Decompress2(r io.Reader) []byte {
 					} else if int(*offs) > a.dst.Len() {
 						return nil
 					} else {
-						// off := a.dst.Len()-*offs
-						// a.dst.Write(a.dst.Bytes()[off:off+*length])
 						for ; *length != 0; *length -= 1 {
 							ch := a.dst.Bytes()[a.dst.Len()-int(*offs)]
 							a.dst.Write([]byte{ch})
